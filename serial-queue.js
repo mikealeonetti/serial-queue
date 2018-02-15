@@ -1,5 +1,5 @@
 //jshint esversion:6
-// version: 1.0.0
+// version: 1.0.1
 
 // Pick which function we will use
 const defer = ( function(){
