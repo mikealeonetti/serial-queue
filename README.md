@@ -3,6 +3,17 @@ JavaScript library to ensure functions are called in a serial sequence.
 
 In short, SerialQueue is used as a way to remedy JavaScript's callback hell and/or to ensure that operations that need to be done in sequence occur in sequence.
 
+# Installation
+This is a Node.js module available through the npm registry.
+
+The module uses the spread syntax which should work Node.js versions >=5. If there is a need to get it working on lower versions let me know and we'll try and work it out.
+
+This module works well also in the browser with webpack and equivalent.
+
+Installation is done using the npm install command:
+
+$ npm install serial-queue
+
 ## Short demo
 ### SerialQueue.v2
 #### Trivial Example
