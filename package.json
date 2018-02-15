@@ -1,0 +1,27 @@
+{
+  "name": "serial-queue",
+  "version": "1.0.0",
+  "description": "Guarantees that code will be executed in sequence.",
+  "main": "serial-queue.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikealeonetti/serial-queue.git"
+  },
+  "keywords": [
+    "Promise",
+    "async",
+    "serial",
+    "queue",
+    "synchronous",
+    "job"
+  ],
+  "author": "Michael A. Leonetti",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mikealeonetti/serial-queue/issues"
+  },
+  "homepage": "https://github.com/mikealeonetti/serial-queue#readme"
+}

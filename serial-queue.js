@@ -1,4 +1,5 @@
 //jshint esversion:6
+// version: 1.0.0
 
 // Pick which function we will use
 const defer = ( function(){
@@ -17,8 +18,6 @@ const defer = ( function(){
  * Much like the first except this one carries options in the queue forward. A better way of making data available without passing a billion options.
  * @author Michael A. Leonetti
  * @date 1/30/2018
- * @copyright 2018, Sonarcloud
- * @version 12
  */
 class Queue2 {
 	/**
@@ -344,8 +343,6 @@ class Queue2 {
  * Runs a series of functions one after another
  * @author Michael A. Leonetti
  * @date 5/4/2015
- * @copyright 2017, Parentglue
- * @version 8
  */
 class Queue {
 	/**
