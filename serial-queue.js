@@ -300,8 +300,14 @@ class Queue2 {
 			const fn = this.thenFn;
 			// Delete it
 			this.thenFn = undefined;
-			// Call it
-			fn( this.args, this );
+			// Wrap it in case
+			try {
+				// Call it
+				fn( this.args, this );
+			}
+			catch( e ) {
+				this._throw( e );
+			}
 		}
 	}
 
