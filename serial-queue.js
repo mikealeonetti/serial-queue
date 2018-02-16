@@ -531,7 +531,9 @@ that.v2 = function( ...args ) { return( new Queue2( ...args ) ); }; // Second ve
 
 
 /**
- * Recursive mapper
+ * Recursive mapper. Not sure what to do with this function. Use at your own risk.
+ * If you are going to use it copy it somewhere where you'll always have it. It may
+ * disappear at some point.
  */
 that.map = function( array, callback ) {
 	// Keep it up

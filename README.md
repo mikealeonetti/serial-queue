@@ -19,7 +19,7 @@ $ npm install serial-queue
 #### Trivial Example
 ```javascript
 SerialQueue()
-.catch( error=>console.error( "Had an issue" ) )
+.catch( error=>console.error( "Had an issue", error ) )
 .queueCb( "array", "string", cb=>cb( [ 'one' ], "hello" ) )
 .queueCb( Error, "second", ( cb, args )=>{
 	// Output
@@ -123,9 +123,54 @@ SerialQueue()
 	process.exit( 0 );
 } );
 ```
+## Using a queue with if, loops, etc
+### With a conditional
+```javascsript
+// Using SerialQueue.v2
+const SerialQueue = require( 'serial-queue' ).v2;
+
+const q = SerialQueue()
+.catch( error=>console.log( "Had an error.", error );
+
+// Do we have a user?
+if( user ) {
+	// We already have the user so get it for the next sequence
+	q.queue( "user"=>User.findById( "xyz" ).exec() ); // Finding function that returns Promise
+}
+else {
+	// Create a new user for the next sequence
+	q.queue( "user"=>new User( { 'username' : "mikealeonetti" } ).save() ); // Saving function that returns a Promise
+}
+
+q
+.queue( ( args )=>{
+	console.log( "Welcome user.", args.user.username );
+} );
+```
+### With a loop
+```javascsript
+// Using SerialQueue.v2
+const SerialQueue = require( 'serial-queue' ).v2;
+
+const q = SerialQueue()
+.catch( error=>console.log( "Had an error.", error );
+
+// Loop through each number and send an SMS
+numbers.forEach( number=>{
+	// Enqueue to ensure one number is sent one at a time
+	q.queueCb( cb=>{
+		// Send a text
+		SMS.send( number, "Hello there!" );
+		// Call the queue after a 1 second cooldown as to not spam the service
+		setTimeout( cb, 1000 );
+	} );
+} );
+```
+
 # Reference
 ## SerialQueue.v2
 Second generation SerialQueue module.
+
 ### A new SerialQueue
 ```javascript
 // Include the module and make sure to add the .v2
@@ -255,7 +300,7 @@ SerialQueue()
 ```
 
 ### queue( [key1], cb )
-Basically the same idea as the queueCb function except it will always call the next queued function (unless an error is thrown) and does not wait for a callback. Only the first key is applicable and the return value of the queued function is intepreted as the variable.
+Basically the same idea as the queueCb function except it will always call the next queued function (unless an error is thrown) and does not wait for a callback. Only the first key is applicable and the return value of the queued function is intepreted as the variable. The cb function is passed the args and the queue (function(args,queue)).
 
 If a promise is returned from the function, it is handled and the result is put into the SerialQueue args. The next function in the queue will not be executed until the promise completes.
 
@@ -269,10 +314,50 @@ SerialQueue()
 // Outputs:
 // { hello: 'there', users: [ 'frank' ] }
 ```
+### subQueue( key1, key2, key3, ..., cb )
+Creates a secondary queue and passes it to the callback function specified. Specify what data to save into the main queue in the key arguments in the first parameters before the callback. The callback function is passed the sub queue, the args variable, and the main queue reference. When the sub queue finishes, the next queued function in the main queue will execute. The main queue waits until all subqueued functions have finished.
+
+Notably, any error thrown in the subqueue will be passed to the main queue.
+```javascript
+SerialQueue()
+.queue( "hello", ()=>"there" )
+.subQueue( "test1", "test2", ( subQueue, args, mainQueue )=>{
+	subQueue
+	.queue( "test1", ()=>"This is a first test." )
+	.queue( "test2", ()=>"We got a: "+args.hello );
+} )
+.then( args=>{
+	// Outputs:
+	// { hello: 'there',
+	//   test1: 'This is a first test.',
+	//   test2: 'We got a: there' }
+	console.log( args );
+} );
+```
+### Internal args variable
+SerialQueue.v2 has an internal args variable passed that accumulates the results as the queue progresses. This can both be set during construction and during any queued function.
+
+```javascript
+SerialQueue( { 'first' : "set" } )
+.queue( args=>{
+	args.manual = "one";
+	args.also = "two";
+} )
+.queue( "set-me", ()=>{
+	return( "yay" );
+} )
+.then( args=>{
+	// Outputs:
+	// { first: 'set', manual: 'one', also: 'two', 'set-me': 'yay' }
+	console.log( args );
+} );
+```
+
 ## SerialQueue
 The theory behind SerialQueue is a lot like SerialQueue.v2 but it is more aimed a more simple queue mechanism. There is no internal args variable passed to each queue function. Instead, the parameters from the previous done function are passed to the next function in the queue.
 
 As with SerialQueue.v2 all functions are chainable for easier use.
+
 ### A new SerialQueue
 ```javascript
 // Include the module. Notice there is no .v2
